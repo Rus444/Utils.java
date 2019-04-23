@@ -2,11 +2,16 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 public class Utils extends BasePage {
+
     //1 Clicking element
     public static void clickElement(By by) {
         driver.findElement(by).click();
@@ -69,29 +74,29 @@ public class Utils extends BasePage {
     }
 
     //9 Wait for locator to be clickable for given time in seconds
-    public static void waitForLocatorToBeClickable(By by, int seconds){
-        WebDriverWait wait=new WebDriverWait(driver, seconds);
+    public static void waitForLocatorToBeClickable(By by, int time){
+        WebDriverWait wait=new WebDriverWait(driver, time);
         wait.until(ExpectedConditions.elementToBeClickable(by));
     }
 
     //10 Wait for element to be clickable
-    public static void waitForElementToBeClickable(WebElement element, int seconds) {
-        WebDriverWait wait = new WebDriverWait(driver, seconds);
+    public static void waitForElementToBeClickable(WebElement element, int time) {
+        WebDriverWait wait = new WebDriverWait(driver, time);
         wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
     //11 Wait for for visibility of element with given time
-    public static void explicitWaitForVisibility (By by, int seconds){
-        WebDriverWait wait= new WebDriverWait(driver, seconds);
+    public static void explicitWaitForVisibility (By by, int time){
+        WebDriverWait wait= new WebDriverWait(driver, time);
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }
 
     //12 Scroll to view element
-    public void scrollToElement(By by, WebElement element, int seconds){
+    public void scrollToElement(By by, WebElement element, int time){
         try {
             ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView(true);)",element);
             driver.findElement(by);
-            Thread.sleep(seconds);
+            Thread.sleep(time);
         }catch (InterruptedException e){
             e.printStackTrace();
         }
@@ -144,15 +149,68 @@ public class Utils extends BasePage {
         select.selectByVisibleText(text);
     }
 
-    //Select element by index
+    //19 Get selected value from dropdown
+    public static void selectElementByValue(By by, String value){
+        Select select=new Select(driver.findElement(by));
+        select.selectByValue(value);
+    }
+
+    //20 Wait for element to be invisible
+    public static void waitForElementToBeInvisible(By by, int time){
+        WebDriverWait wait = new WebDriverWait(driver, time);
+        wait.until(ExpectedConditions.invisibilityOf(driver.findElement(by)));
+    }
+
+    //21 Select element by index
     public static void selectElementByIndex(By by, int index){
         Select select=new Select(driver.findElement(by));
         select.selectByIndex(index);
     }
 
-    //19 Get selected value from dropdown
-    public static void selectElementByValue(By by, String value){
-        Select select=new Select(driver.findElement(by));
-        select.selectByValue(value);
+    //22 Long date stamp
+    public static String dateStamp() {
+        DateFormat dateFormat = new SimpleDateFormat("DDMMYYYYSSmmHH");
+        Date date = new Date();
+        String date1 = dateFormat.format(date);
+        return date1;
+    }
+
+    //23 Short date stamp
+    public static String shortDateStamp (){
+        DateFormat dateFormat=new SimpleDateFormat("DDMMHHMM");
+        Date date= new Date();
+        String date2=dateFormat.format(date);
+        return date2;
+    }
+
+    //24 Assert
+    public static void assertByGetText(String expectedResult, By by, String errorMessage){
+        Assert.assertEquals(expectedResult, driver.findElement(by).getText(), errorMessage);
+    }
+
+    //25 Is Dropdown present
+    public static boolean isDropdownMenuPresent (By by, String name){
+        if (driver.findElement(by).getTagName().contains("Select")) {
+            return true;
+        } else {System.out.println("Dropdown menu should not be present");
+        return false;
+        }
+    }
+
+    //27 Get selected value from dropdown
+    public static String selectValueFromDropdown(By by){
+        driver.findElement(by).isDisplayed();
+        Select dropBox = new Select(driver.findElement(by));
+        return dropBox.getFirstSelectedOption().getText();
+    }
+
+    //28 Convert date
+    public static void getDateToNumeric (String dayMonthYear){
+        DateFormat dateFormat=new SimpleDateFormat();
+        Date date = null;
+        try {
+            date= dateFormat.parse(dayMonthYear);
+        }catch (Exception e){
+        }
     }
 }
